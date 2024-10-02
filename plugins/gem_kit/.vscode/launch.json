@@ -1,0 +1,56 @@
+/// =========================== Launch Configuration  ===========================
+/// While running tests on Android add "--flavor=integrationtest" . On IOS remove this tag
+///
+/// GEM_TOKEN should located inside a token.json file located in the same directory as launch.json
+/// Use "--dart-define-from-file=../.vscode/token.json" in order to set the GEM_TOKEN.
+/// 
+/// Particular groups of tests can be run with "--tags=TestGroupToBeRun".
+/// Particular groups of tests can be excluded with ""--exclude-tags=UI".
+///
+/// For generating lcov file run with  "--coverage", "--coverage-package=gem_kit".
+///
+/// While generating goldens run with "--dart-define", "NOT_HALT_ON_IMAGE_MISMATCH=true".
+/// The tests will not fail if the golden image does not match.
+/// =============================================================================
+{
+    "configurations": [
+        {
+            "name": "App Debug",
+            "type": "dart",
+            "request": "launch",
+            "cwd": "example",
+            "program": "lib/main.dart"
+        },
+        {
+            "name": "Integration Tests",
+            "type": "dart",
+            "request": "launch",
+            "cwd": "example",
+            "program": "integration_test/main_test_test.dart",
+            "args": [
+                "--flavor=integrationtest",
+                "--tags=Marker",
+                "--dart-define-from-file=../.vscode/token.json",
+                // "--coverage",
+                // "--coverage-package=gem_kit",
+                // "--function-coverage"
+            ]
+        },
+        {
+            "name": "Attach debugger",
+            "request": "attach",
+            "type": "dart",
+            "cwd": "example/integration_test",
+            "vmServiceUri": "${command:dart.promptForVmService}"
+        },
+        {
+            "name": "Gem Test Tool + simulated environment",
+            "request": "launch",
+            "type": "dart",
+            "cwd": "tools/gem_flutter_test_tool",
+            "args": [
+                "--dart-define=use_simulated_environment=true"
+            ],
+        },
+    ]
+}
