@@ -35,8 +35,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
- 
   flutter_lints: ^5.0.0
+  pocketbase_utils: ^0.0.6
+  build_runner: ^2.4.13
 
 flutter:
   uses-material-design: true
@@ -54,3 +55,9 @@ flutter:
         - asset: fonts/Poppins-Bold.ttf
         - asset: fonts/Poppins-ExtraBold.ttf
   
+
+pocketbase_utils:
+  enabled: true # Required. Must be set to true to activate the package. Default: false
+  pb_schema_path: pb_schema.json # Optional. Sets the path of your collection schema file. Default: pb_schema.json
+  output_dir: lib/models # Optional. Sets the directory of generated model files. If the directory doesn't exist — it'll be created. Default: lib/generated/pocketbase
+  line_length: 80 # Optional. Sets the length of line for dart formatter of generated code. Default: 80
