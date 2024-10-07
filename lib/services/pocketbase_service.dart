@@ -13,9 +13,11 @@ import 'package:sabay_ka/models/users_record.dart';
 abstract class PocketbaseService extends ChangeNotifier {
   late PocketBase _client;
   UsersRecord? user;
+  bool get isSignedIn => user != null;
   Future signInWithEmailAndPassword({required String email, required String password});
   Future signInWithGoogle();
   void signOut();
+  Future<void> signUpWithGoogle({ required String firstName, required String lastName, required String phoneNumber });
   Future<List<RidesRecord>> getRides();
   Future<RidesRecord> getRide(String id);
   void subscribeToRides(Function(RecordSubscriptionEvent) callback);
@@ -38,6 +40,11 @@ abstract class PocketbaseService extends ChangeNotifier {
 class PocketbaseServiceImpl extends PocketbaseService {
   PocketbaseServiceImpl._create(String url, AsyncAuthStore authStore) {
     _client = PocketBase(url, authStore: authStore);
+    if (_client.authStore.model != null) {
+      user = UsersRecord.fromJson(_client.authStore.model.toJson());
+    } else {
+      user = null;
+    }
 
     _client.authStore.onChange.listen((AuthStoreEvent event) {
       if (event.model is RecordModel) {
@@ -79,6 +86,24 @@ class PocketbaseServiceImpl extends PocketbaseService {
         } on Exception catch (e) {
           debugPrint(e.toString());
         }
+      });
+    }
+
+  @override
+    Future<void> signUpWithGoogle({required String firstName, required String lastName, required String phoneNumber}) async {
+      await _client.collection('users').authWithOAuth2('google', (Uri uri) async {
+        try {
+          await launchUrl(uri, customTabsOptions: CustomTabsOptions(
+            showTitle: true,
+            urlBarHidingEnabled: true,
+          ));
+        } on Exception catch (e) {
+          debugPrint(e.toString());
+        }
+      }, createData: {
+        'firstName': firstName,
+        'lastName': lastName,
+        'phoneNumber': phoneNumber,
       });
     }
 

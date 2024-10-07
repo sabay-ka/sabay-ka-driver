@@ -5,7 +5,7 @@ import 'package:sabay_ka/common/widget/common_container.dart';
 import 'package:sabay_ka/common/widget/common_popup_box.dart';
 import 'package:sabay_ka/common/widget/custom_text_field.dart';
 import 'package:sabay_ka/common/widget/form_validator.dart';
-import 'package:sabay_ka/feature/auth/login/login_page.dart';
+import 'package:sabay_ka/feature/auth/welcomeScreen/widget/welcome_widget.dart';
 
 class ChangePasswordWidget extends StatefulWidget {
   const ChangePasswordWidget({super.key});
@@ -38,7 +38,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const LoginWidget(),
+                        builder: (context) => const WelcomeWidget(),
                       ),
                       (route) => false);
                 },

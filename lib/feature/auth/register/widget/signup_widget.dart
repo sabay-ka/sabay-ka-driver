@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:form_validator/form_validator.dart';
+import 'package:pocketbase/pocketbase.dart';
 import 'package:sabay_ka/common/theme.dart';
-import 'package:sabay_ka/common/utils/size_utils.dart';
 import 'package:sabay_ka/common/utils/snackbar_utils.dart';
 import 'package:sabay_ka/common/widget/common_container.dart';
 import 'package:sabay_ka/common/widget/custom_button.dart';
-import 'package:sabay_ka/common/widget/custom_text_field.dart';
-import 'package:sabay_ka/feature/auth/login/login_page.dart';
+import 'package:sabay_ka/common/widget/custom_text_field.dart'; 
+import 'package:sabay_ka/feature/auth/welcomeScreen/widget/welcome_widget.dart';
+import 'package:sabay_ka/feature/dashboard/dashboard_widget.dart';
+import 'package:sabay_ka/main.dart';
+import 'package:sabay_ka/services/pocketbase_service.dart';
 
 class SignUpWidget extends StatefulWidget {
   const SignUpWidget({super.key});
@@ -16,30 +19,62 @@ class SignUpWidget extends StatefulWidget {
 }
 
 class _SignUpWidgetState extends State<SignUpWidget> {
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
   final phoneNumberController = TextEditingController();
-  final _fromKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+
+  Future<void> signUpWithGoogle(BuildContext context, GlobalKey<FormState> formKey, String firstName, String lastName, String phoneNumber) async {
+    if (!formKey.currentState!.validate()) return;
+
+    try {
+      await locator<PocketbaseService>().signUpWithGoogle(
+        firstName: firstName,
+        lastName: lastName,
+        phoneNumber: phoneNumber,
+      );
+      if (!context.mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DashboardWidget(),
+        ),
+        (route) => false,
+      );
+    } on ClientException catch (e) {
+      if (!context.mounted) return;
+      SnackBarUtils.showErrorBar(context: context, message: e.response.cast()["message"]);
+    }
+  }
+
+  @override
+  void dispose() {
+    firstNameController.dispose();
+    lastNameController.dispose();
+    phoneNumberController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CommonContainer(
       appBarTitle: "Sign Up",
-      title: "Sign up with your email or phone number",
+      title: "Sign up with your Google account",
       body: Form(
-        key: _fromKey,
+        key: _formKey,
         child: Column(
           children: [
             ReusableTextField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              controller: nameController,
-              hintText: "Name",
+              controller: firstNameController,
+              hintText: "First Name",
               validator: ValidationBuilder().required().build(),
             ),
             ReusableTextField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              controller: emailController,
-              hintText: "Email",
-              validator: ValidationBuilder().email().required().build(),
+              controller: lastNameController,
+              hintText: "Last Name",
+              validator: ValidationBuilder().required().build(),
             ),
             ReusableTextField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -49,35 +84,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
             ),
             CustomRoundedButtom(
                 title: "Sign Up",
-                onPressed: () {
-                  if (_fromKey.currentState!.validate()) {
-                    SnackBarUtils.showErrorBar(
-                        context: context,
-                        message: "This feature is still in progress.");
-                  }
-                }),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                const Divider(
-                  thickness: 2,
-                ),
-                Container(
-                  color: CustomTheme.lightColor,
-                  width: 30.wp,
-                  child: const Text(
-                    "or",
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
-            CustomRoundedButtom(
-              onPressed: () {},
-              title: "Sign up with Gmail",
-              color: Colors.transparent,
-              textColor: CustomTheme.darkColor.withOpacity(0.6),
-              borderColor: CustomTheme.appColor,
+                onPressed: () => _SignUpWidgetState().signUpWithGoogle(context, _formKey,
+                    firstNameController.text, lastNameController.text, phoneNumberController.text),
             ),
             Center(
               child: InkWell(
@@ -85,7 +93,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LoginWidget(),
+                      builder: (context) => const WelcomeWidget(),
                     ),
                   );
                 },
@@ -109,5 +117,4 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     );
   }
 
-  final gederList = ["Male", "Female", "Other"];
 }

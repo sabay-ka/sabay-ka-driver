@@ -5,11 +5,32 @@ import 'package:sabay_ka/common/theme.dart';
 import 'package:sabay_ka/common/utils/size_utils.dart';
 import 'package:sabay_ka/common/widget/custom_button.dart';
 import 'package:sabay_ka/common/widget/page_wrapper.dart';
-import 'package:sabay_ka/feature/auth/login/login_page.dart';
 import 'package:sabay_ka/feature/auth/register/screen/signup_page.dart';
+import 'package:sabay_ka/feature/dashboard/dashboard_widget.dart';
+import 'package:sabay_ka/main.dart';
+import 'package:sabay_ka/services/pocketbase_service.dart';
+import 'package:pocketbase/pocketbase.dart';
+import 'package:sabay_ka/common/utils/snackbar_utils.dart';
 
 class WelcomeWidget extends StatelessWidget {
   const WelcomeWidget({super.key});
+
+  void signInWithGoogle(BuildContext context) async {
+    try {
+      await locator<PocketbaseService>().signInWithGoogle();
+      if (!context.mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DashboardWidget(),
+        ),
+        (route) => false,
+      );
+    } on ClientException catch (e) {
+      if (!context.mounted) return;
+      SnackBarUtils.showErrorBar(context: context, message: e.response.cast()["message"]);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +58,10 @@ class WelcomeWidget extends StatelessWidget {
             ),
             CustomRoundedButtom(
               color: Colors.transparent,
-              title: "Login",
+              title: "Sign in with Google",
               textColor: CustomTheme.primaryColor,
               borderColor: CustomTheme.primaryColor,
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginWidget(),
-                    ));
-              },
+              onPressed: () => WelcomeWidget().signInWithGoogle(context) 
             ),
           ],
         ),

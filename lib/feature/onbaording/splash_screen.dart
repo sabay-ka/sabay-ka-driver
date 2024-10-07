@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sabay_ka/common/constant/assets.dart';
 import 'package:sabay_ka/feature/auth/welcomeScreen/screen/welcome_page.dart';
+import 'package:sabay_ka/feature/dashboard/dashboard_widget.dart';
 import 'package:sabay_ka/feature/onbaording/onboarding_screen.dart';
+import 'package:sabay_ka/main.dart';
+import 'package:sabay_ka/services/pocketbase_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashWidget extends StatefulWidget {
@@ -21,7 +24,10 @@ class _SplashWidgetState extends State<SplashWidget> {
   getAppStatus() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final appStatus = prefs.getBool("showOnboarding");
-    if (appStatus == true) {
+    final pbAuth = prefs.getString("pb_auth");
+
+    if (appStatus == null || appStatus == true) {
+      // First time user, navigate to OnBoarding
       Future.delayed(const Duration(seconds: 2), () {
         Navigator.pushReplacement(
             context,
@@ -29,15 +35,28 @@ class _SplashWidgetState extends State<SplashWidget> {
               builder: (context) => const OnBoardingPage(),
             ));
       });
-    } else {
+      return;
+    } 
+
+    if (pbAuth != "" && pbAuth != null) {
+      // If user is already logged in, navigate to Dashboard
       Future.delayed(const Duration(seconds: 2), () {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => const WelcomePage(),
+              builder: (context) => const DashboardWidget(),
             ));
       });
-    }
+      return;
+    } 
+    // Otherwise, navigate to Login and Register page
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const WelcomePage(),
+          ));
+    });
   }
 
   @override

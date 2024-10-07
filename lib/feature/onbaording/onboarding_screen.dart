@@ -64,7 +64,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                 children: [
                   _buildPage(
                     imageAsset: Assets.anywhereYouAreImage,
-                    title: "Anywhere you are",
+                    title: "Anywhere you are in the campus",
                     description:
                         "Sell houses easily with the help of Listenoryx and to make this line big I am writing more.",
                   ),
@@ -110,7 +110,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   Widget _buildPage(
       {required String imageAsset,
       required String title,
-      required String description}) {
+      String? description}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -125,11 +125,11 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                     .copyWith(color: CustomTheme.darkerBlack),
               ),
               SizedBox(height: 10.hp),
-              Text(
-                description,
-                style: PoppinsTextStyles.subheadSmallRegular,
-                textAlign: TextAlign.center,
-              ),
+              //Text(
+              //  description,
+              //  style: PoppinsTextStyles.subheadSmallRegular,
+              //  textAlign: TextAlign.center,
+              //),
             ],
           ),
         ),

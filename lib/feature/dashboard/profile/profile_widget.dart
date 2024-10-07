@@ -5,7 +5,7 @@ import 'package:sabay_ka/common/utils/size_utils.dart';
 import 'package:sabay_ka/common/widget/common_container.dart';
 import 'package:sabay_ka/common/widget/custom_button.dart';
 import 'package:sabay_ka/common/widget/custom_text_field.dart';
-import 'package:sabay_ka/feature/auth/login/login_page.dart';
+import 'package:sabay_ka/feature/auth/welcomeScreen/widget/welcome_widget.dart';
 import 'package:sabay_ka/main.dart';
 import 'package:sabay_ka/services/pocketbase_service.dart';
 
@@ -58,7 +58,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const LoginWidget(),
+                    builder: (context) => const WelcomeWidget(),
                   ));
             },
             textColor: CustomTheme.appColor,

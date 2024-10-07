@@ -4,7 +4,7 @@ import 'package:sabay_ka/common/constant/assets.dart';
 import 'package:sabay_ka/common/widget/common_container.dart';
 import 'package:sabay_ka/common/widget/common_list_tile.dart';
 import 'package:sabay_ka/common/widget/common_popup_box.dart';
-import 'package:sabay_ka/feature/auth/login/login_page.dart';
+import 'package:sabay_ka/feature/auth/welcomeScreen/widget/welcome_widget.dart';
 import 'package:sabay_ka/feature/drawer/settings/change_password_widget.dart';
 import 'package:sabay_ka/feature/drawer/settings/contact_us_widget.dart';
 import 'package:sabay_ka/feature/drawer/settings/delete_account_widget.dart';
@@ -60,7 +60,7 @@ class SettingWidget extends StatelessWidget {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const LoginWidget(),
+                    builder: (context) => const WelcomeWidget(),
                   ),
                   (route) => false,
                 );

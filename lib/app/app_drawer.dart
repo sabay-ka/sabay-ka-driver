@@ -4,7 +4,7 @@ import 'package:sabay_ka/app/text_style.dart';
 import 'package:sabay_ka/common/constant/assets.dart';
 import 'package:sabay_ka/common/utils/size_utils.dart';
 import 'package:sabay_ka/common/widget/common_popup_box.dart';
-import 'package:sabay_ka/feature/auth/login/login_page.dart';
+import 'package:sabay_ka/feature/auth/welcomeScreen/widget/welcome_widget.dart';
 import 'package:sabay_ka/feature/drawer/aboutUs/about_us_widget.dart';
 import 'package:sabay_ka/feature/drawer/complain/complain_widget.dart';
 import 'package:sabay_ka/feature/drawer/helpSupport/help_support_widget.dart';
@@ -21,7 +21,7 @@ class CustomDrawer extends StatelessWidget {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        builder: (context) => const LoginWidget(),
+        builder: (context) => const WelcomeWidget(),
       ),
       (route) => false,
     );
