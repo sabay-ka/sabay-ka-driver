@@ -10,6 +10,7 @@
 import 'package:collection/collection.dart' as _i3;
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pocketbase/pocketbase.dart' as _i2;
+import 'package:sabay_ka/models/users_record.dart';
 
 import 'base_record.dart' as _i1;
 import 'empty_values.dart' as _i4;
@@ -58,6 +59,7 @@ final class RequestsRecord extends _i1.BaseRecord {
     required this.rowIdx,
     required this.columnIdx,
     required this.status,
+    required this.note,
   });
 
   factory RequestsRecord.fromJson(Map<String, dynamic> json) {
@@ -68,12 +70,14 @@ final class RequestsRecord extends _i1.BaseRecord {
       collectionId: json['collectionId'],
       collectionName: json['collectionName'],
       ride: json['ride'],
-      passenger: json['passenger'],
+      passenger: UsersRecord.fromJson(json['expand']['passenger']),
       destLat: (json['destLat'] as num).toDouble(),
       destLong: (json['destLong'] as num).toDouble(),
       rowIdx: (json['rowIdx'] as num).toDouble(),
       columnIdx: (json['columnIdx'] as num).toDouble(),
-      status: json['status']
+      status: RequestsRecordStatusEnum.values
+          .firstWhere((e) => e.toString() == 'RequestsRecordStatusEnum.${json['status']}'), 
+      note: json['note'],
     );
   } 
 
@@ -92,7 +96,7 @@ final class RequestsRecord extends _i1.BaseRecord {
 
   final String ride;
 
-  final String passenger;
+  final UsersRecord passenger;
 
   final double destLat;
 
@@ -101,6 +105,8 @@ final class RequestsRecord extends _i1.BaseRecord {
   final double rowIdx;
 
   final double columnIdx;
+
+  final String note;
 
   final RequestsRecordStatusEnum status;
 
@@ -127,12 +133,13 @@ final class RequestsRecord extends _i1.BaseRecord {
 
   RequestsRecord copyWith({
     String? ride,
-    String? passenger,
+    UsersRecord? passenger,
     double? destLat,
     double? destLong,
     double? rowIdx,
     double? columnIdx,
     RequestsRecordStatusEnum? status,
+    String? note,
   }) {
     return RequestsRecord(
       id: id,
@@ -147,6 +154,7 @@ final class RequestsRecord extends _i1.BaseRecord {
       rowIdx: rowIdx ?? this.rowIdx,
       columnIdx: columnIdx ?? this.columnIdx,
       status: status ?? this.status,
+      note: note ?? this.note,
     );
   }
 
@@ -183,11 +191,12 @@ final class RequestsRecord extends _i1.BaseRecord {
 
   static Map<String, dynamic> forCreateRequest({
     required String ride,
-    required String passenger,
+    required UsersRecord passenger,
     required double destLat,
     required double destLong,
     required double rowIdx,
     required double columnIdx,
+    required String note,
     required RequestsRecordStatusEnum status,
   }) {
     final jsonMap = RequestsRecord(
@@ -203,6 +212,7 @@ final class RequestsRecord extends _i1.BaseRecord {
       rowIdx: rowIdx,
       columnIdx: columnIdx,
       status: status,
+      note: note,
     ).toJson();
     final Map<String, dynamic> result = {};
     result.addAll({

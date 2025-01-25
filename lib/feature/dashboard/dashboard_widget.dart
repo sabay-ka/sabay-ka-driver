@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sabay_ka/common/constant/assets.dart';
 import 'package:sabay_ka/common/theme.dart';
-import 'package:sabay_ka/feature/dashboard/favourite/favourite_widget.dart';
-import 'package:sabay_ka/feature/dashboard/homeScreen/home_page_widget.dart';
-import 'package:sabay_ka/feature/dashboard/offer/offer_widget.dart';
 import 'package:sabay_ka/feature/dashboard/profile/profile_widget.dart';
 import 'package:sabay_ka/feature/dashboard/wallet/wallet_widget.dart';
+import 'package:sabay_ka/feature/rideFlow/create_ride.dart';
+import 'package:sabay_ka/feature/rideFlow/watch_requests.dart';
+import 'package:sabay_ka/feature/rideFlow/watch_ride.dart';
+import 'package:sabay_ka/main.dart';
+import 'package:sabay_ka/models/rides_record.dart';
+import 'package:sabay_ka/services/pocketbase_service.dart';
 
 class DashboardWidget extends StatefulWidget {
   const DashboardWidget({super.key});
@@ -16,7 +19,7 @@ class DashboardWidget extends StatefulWidget {
 }
 
 class _DashboardWidgetState extends State<DashboardWidget> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -24,12 +27,43 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   }
 
   List pages = [
-    const HomePageWidget(),
-    const FavouriteWidget(),
     const WalletWidget(),
-    const OfferWidget(),
+    const CreateRideWidget(),
     const ProfileWidget(),
   ];
+
+  @override
+    void initState() {
+      // If user has an ongoing request, navigate to WatchRide
+      locator<PocketbaseService>().getOngoingRide()
+        .then((ride) {
+          if (context.mounted && ride.status == RidesRecordStatusEnum.waiting) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => WatchRequests(
+                  rideId: ride.id,
+                  isFromTomasClaudio: ride.isFromTomasClaudio,
+                ),
+              ),
+              (route) => false,
+            );
+          }
+
+          if (context.mounted && ride.status == RidesRecordStatusEnum.ongoing) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => WatchRide(
+                  rideId: ride.id,
+                ),
+              ),
+              (route) => false,
+            );
+          }
+        });
+      super.initState();
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -58,44 +92,26 @@ class _DashboardWidgetState extends State<DashboardWidget> {
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
-                  _selectedIndex == 0 ? Assets.houseFillIcon : Assets.houseIcon,
+                  _selectedIndex == 0
+                      ? Assets.walletFillIcon
+                      : Assets.walletIcon,
                   color: _selectedIndex == 0
                       ? CustomTheme.appColor
                       : CustomTheme.darkColor.withOpacity(0.7),
                   width: 30),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                  _selectedIndex == 1 ? Assets.heartFillIcon : Assets.heartIcon,
-                  color: _selectedIndex == 1
-                      ? CustomTheme.appColor
-                      : CustomTheme.darkColor.withOpacity(0.7),
-                  width: 30),
-              label: 'Favourite',
+              label: 'Transactions',
             ),
             const BottomNavigationBarItem(
               icon: SizedBox(
                 width: 30,
                 height: 30,
               ),
-              label: 'Wallet',
+              label: 'Book',
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
-                  _selectedIndex == 3
-                      ? Assets.discountFillIcon
-                      : Assets.discountIcon,
-                  color: _selectedIndex == 3
-                      ? CustomTheme.appColor
-                      : CustomTheme.darkColor.withOpacity(0.7),
-                  width: 30),
-              label: 'Offer',
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                  _selectedIndex == 4 ? Assets.userFillIcon : Assets.userIcon,
-                  color: _selectedIndex == 4
+                  _selectedIndex == 2 ? Assets.userFillIcon : Assets.userIcon,
+                  color: _selectedIndex == 2
                       ? CustomTheme.appColor
                       : CustomTheme.darkColor.withOpacity(0.7),
                   width: 30),
@@ -117,12 +133,13 @@ class _DashboardWidgetState extends State<DashboardWidget> {
           elevation: 0,
           onPressed: () {
             setState(() {
-              _selectedIndex = 2;
+              _selectedIndex = 1;
             });
           },
-          child: SvgPicture.asset(
-            Assets.walletIcon,
+          child: Icon(
+            Icons.book,
             color: CustomTheme.lightColor,
+            size: 30,
           ),
         ),
       ),

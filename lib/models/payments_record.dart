@@ -64,8 +64,10 @@ final class PaymentsRecord extends _i1.BaseRecord {
       collectionName: json['collectionName'],
       booking: json['booking'],
       amount: (json['amount'] as num).toDouble(),
-      method: json['method'],
-      status: json['status'],
+      method: PaymentsRecordMethodEnum.values.firstWhere(
+          (e) => e.toString() == 'PaymentsRecordMethodEnum.${json['method']}'),
+      status: PaymentsRecordStatusEnum.values.firstWhere(
+          (e) => e.toString() == 'PaymentsRecordStatusEnum.${json['status']}'),
     );
   }
 

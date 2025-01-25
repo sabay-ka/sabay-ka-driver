@@ -42,8 +42,8 @@ class WelcomeWidget extends StatelessWidget {
             Expanded(
               child: _buildPage(
                 imageAsset: Assets.welcomeScreenImage,
-                title: "Sabay Ka?",
-                description: "A carpooling service for campus students",
+                title: "Sabay Ka? Driver",
+                description: "The driver app for Sabay Ka? platform",
               ),
             ),
             CustomRoundedButtom(
